@@ -277,18 +277,24 @@ function App() {
     // Normalize frequency to 0-1 range
     const normalizedFreq = Math.max(0, Math.min(1, (frequency - minFreq) / freqRange));
     
-    // Map normalized frequency to Hue (e.g., 180-360 range - blues to reds)
-    const hue1 = 180 + normalizedFreq * 180; 
-    const hue2 = (hue1 + 40) % 360; // Second hue for gradient
+    // --- Color Explosion Logic ---
+    // Map normalized frequency to Hue (full 360 range)
+    const baseHue = (normalizedFreq * 360) % 360;
     
-    // Map normalized frequency to Lightness (higher notes are lighter)
-    // Make the range smaller (e.g., 20% to 50%) to avoid pure black/white
-    const lightness = 20 + normalizedFreq * 30; 
+    // Create three distinct hues for the gradient
+    const hue1 = baseHue;
+    const hue2 = (baseHue + 120) % 360; // Triadic color scheme
+    const hue3 = (baseHue + 240) % 360;
     
-    // Saturation can be fixed or varied
-    const saturation = 70; 
+    // Map normalized frequency to Lightness (wider range 30-70%)
+    const lightness = 30 + normalizedFreq * 40; 
+    
+    // High Saturation for vibrancy
+    const saturation = 95; 
 
-    return `linear-gradient(135deg, hsl(${hue1}, ${saturation}%, ${lightness}%), hsl(${hue2}, ${saturation}%, ${lightness - 5}%))`;
+    // Create a more complex gradient
+    return `radial-gradient(circle, hsl(${hue1}, ${saturation}%, ${lightness}%), hsl(${hue2}, ${saturation}%, ${lightness - 10}%), hsl(${hue3}, ${saturation}%, ${lightness - 20}%))`;
+    // Alternative: linear-gradient(135deg, hsl(${hue1}, ${saturation}%, ${lightness}%), hsl(${hue2}, ${saturation}%, ${lightness-10}%), hsl(${hue3}, ${saturation}%, ${lightness-5}%))`
   };
 
   const playNote = useCallback((frequency: number) => {
