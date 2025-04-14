@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import './App.css'
+import ToastNotification from './ToastNotification'; // Import the new component
+import './ToastNotification.css'; // Import toast CSS here too for the container
 
 // Musical notes frequencies
 const NOTES = {
@@ -243,14 +245,22 @@ const melodySpecificTexts: Record<MelodyName, MelodyTextSet> = {
   "Mattias' Epic Build Success": { en: ["Green lights...", "An epic culmination..."], sv: ["Gröna lampor...", "En episk kulmen..."] }
 };
 
+// Type for individual toast state
+interface ToastState {
+  id: number;
+  message: string;
+}
+
 function App() {
   const [isSwedish, setIsSwedish] = useState(false)
   const [playlistState, setPlaylistState] = useState<'idle' | 'playing'>('idle')
   const [selectedMelody, setSelectedMelody] = useState<MelodyName>(melodyNames[0])
   const [backgroundStyle, setBackgroundStyle] = useState({}); // State for background style
   const [announceMelodyName, setAnnounceMelodyName] = useState<boolean>(false); // Default to false (unchecked)
+  const [toasts, setToasts] = useState<ToastState[]>([]); // State for active toasts
   const audioContextRef = useRef<AudioContext | null>(null)
   const loopActiveRef = useRef<boolean>(false) // Ref to control the async loop
+  let toastIdCounter = useRef(0); // Counter for unique toast IDs
 
   const getAudioContext = useCallback(() => {
     if (!audioContextRef.current) {
@@ -326,6 +336,17 @@ function App() {
     bodyOsc.stop(time + 0.1); // Stop body based on its decay
   }, [getAudioContext])
 
+  // Function to add a new toast
+  const addToast = useCallback((message: string) => {
+    const id = toastIdCounter.current++;
+    setToasts((prevToasts) => [...prevToasts, { id, message }]);
+  }, []);
+
+  // Function to remove a toast by ID
+  const removeToast = useCallback((id: number) => {
+    setToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
+  }, []);
+
   const playHiHat = useCallback(() => {
     const audioContext = getAudioContext()
     const time = audioContext.currentTime
@@ -363,7 +384,10 @@ function App() {
     // Play
     noiseSource.start(time);
     noiseSource.stop(time + 0.1); // Stop slightly after decay finishes
-  }, [getAudioContext])
+
+    // Trigger a toast notification when hi-hat plays
+    addToast("HIGH HATTT!!!");
+  }, [getAudioContext, addToast])
 
   // --- Note to Color Logic ---
   const noteToGradient = (frequency: number): string => {
@@ -617,6 +641,19 @@ function App() {
       <div className="placeholder-text-container">
         {currentParagraphs.map((text: string, index: number) => (
           <p key={index}>{text}</p>
+        ))}
+      </div>
+
+      {/* Toast Container - Renders all active toasts */}
+      <div className="toast-container">
+        {toasts.map((toast) => (
+          <ToastNotification 
+            key={toast.id} 
+            id={toast.id} 
+            message={toast.message}
+            onRemove={removeToast}
+            duration={1000} // Display for 1 sec before fade
+          />
         ))}
       </div>
     </div>
