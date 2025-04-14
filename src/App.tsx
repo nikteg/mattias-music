@@ -576,7 +576,7 @@ function App() {
             onClick={handlePlayStopClick} 
             className={`melody-button ${playlistState === 'playing' ? 'playing' : ''}`}
           >
-            {playlistState === 'playing' ? '⏹️ Pause' : '▶️ Play'}
+            {playlistState === 'playing' ? '⏸️ Pause' : '▶️ Play'}
           </button>
         </div> {/* End of button-container */}
 
