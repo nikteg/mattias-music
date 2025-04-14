@@ -188,6 +188,7 @@ function App() {
   const [isSwedish, setIsSwedish] = useState(false)
   const [playlistState, setPlaylistState] = useState<'idle' | 'playing'>('idle')
   const [selectedMelody, setSelectedMelody] = useState<MelodyName>(melodyNames[0])
+  const [backgroundStyle, setBackgroundStyle] = useState({}); // State for background style
   const audioContextRef = useRef<AudioContext | null>(null)
   const loopActiveRef = useRef<boolean>(false) // Ref to control the async loop
 
@@ -265,6 +266,30 @@ function App() {
     bodyOsc.stop(time + 0.1); // Stop body based on its decay
   }, [getAudioContext])
 
+  // --- Note to Color Logic ---
+  const noteToGradient = (frequency: number): string => {
+    // Map frequency (e.g., 130Hz to 1050Hz) to HSL values
+    const minFreq = NOTES.C3;
+    const maxFreq = NOTES.C6;
+    const freqRange = maxFreq - minFreq;
+    
+    // Normalize frequency to 0-1 range
+    const normalizedFreq = Math.max(0, Math.min(1, (frequency - minFreq) / freqRange));
+    
+    // Map normalized frequency to Hue (e.g., 180-360 range - blues to reds)
+    const hue1 = 180 + normalizedFreq * 180; 
+    const hue2 = (hue1 + 40) % 360; // Second hue for gradient
+    
+    // Map normalized frequency to Lightness (higher notes are lighter)
+    // Make the range smaller (e.g., 20% to 50%) to avoid pure black/white
+    const lightness = 20 + normalizedFreq * 30; 
+    
+    // Saturation can be fixed or varied
+    const saturation = 70; 
+
+    return `linear-gradient(135deg, hsl(${hue1}, ${saturation}%, ${lightness}%), hsl(${hue2}, ${saturation}%, ${lightness - 5}%))`;
+  };
+
   const playNote = useCallback((frequency: number) => {
     // Simplified playNote - only plays the tone, drums are handled by rhythm logic
     const audioContext = getAudioContext()
@@ -278,7 +303,10 @@ function App() {
     gainNode.gain.exponentialRampToValueAtTime(0.00001, time + 0.3)
     oscillator.start(time)
     oscillator.stop(time + 0.3)
-  }, [getAudioContext])
+
+    // Update background based on the note played
+    setBackgroundStyle({ background: noteToGradient(frequency) });
+  }, [getAudioContext, noteToGradient])
 
   const handleLanguageSwitch = () => {
     setIsSwedish(prev => !prev)
@@ -361,7 +389,11 @@ function App() {
       // Wait for the melody note duration
       await new Promise(resolve => setTimeout(resolve, noteDuration));
     }
-  }, [playKick, playSnare, playNote, getAudioContext, speak]); 
+    // Reset background after melody finishes if loop is stopping
+    if (!loopActiveRef.current) {
+      setBackgroundStyle({});
+    }
+  }, [playKick, playSnare, playNote, speak]); 
 
   const startPlaylistLoop = useCallback(async () => {
     if (playlistState === 'playing') return; // Prevent multiple loops
@@ -395,7 +427,7 @@ function App() {
     if ('speechSynthesis' in window) {
       speechSynthesis.cancel(); // Stop any ongoing speech
     }
-    // The running loop will detect loopActiveRef being false and set state to idle
+    setBackgroundStyle({}); // Reset background when stopping playlist
   }, []);
 
   const handlePlayStopClick = () => {
@@ -414,9 +446,10 @@ function App() {
   }, [stopPlaylistLoop]);
 
   return (
-    <div className="container">
+    // Apply the background style to the main container
+    <div className="container" style={backgroundStyle}>
       <h1>
-        {isSwedish ? '🇸🇪 Mattias suger' : '🇬🇧 Hi Mattias'}
+        {isSwedish ? '🇸�� Mattias suger' : '🇬🇧 Hi Mattias'}
       </h1>
       <div className="button-container">
         <button 
