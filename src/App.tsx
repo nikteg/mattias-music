@@ -298,7 +298,7 @@ function App() {
 
     oscillator.start(time)
     oscillator.stop(time + 0.15)
-    addToast("KICK!"); // Add toast for kick
+    addToast("💥 KICK!"); // Updated toast message
   }, [getAudioContext, addToast])
 
   const playSnare = useCallback(() => {
@@ -345,8 +345,8 @@ function App() {
     noiseSource.start(time);
     bodyOsc.start(time);
     noiseSource.stop(time + 0.15); // Stop noise based on its decay
-    bodyOsc.stop(time + 0.1); // Stop body based on its decay
-    addToast("SNARE!"); // Add toast for snare
+    bodyOsc.stop(time + 0.1); 
+    addToast("✨ SNARE!"); // Updated toast message
   }, [getAudioContext, addToast])
 
   const playHiHat = useCallback(() => {
@@ -385,8 +385,8 @@ function App() {
 
     // Play
     noiseSource.start(time);
-    noiseSource.stop(time + 0.1); // Stop slightly after decay finishes
-    addToast("HIGH HATTT!!!"); // Keep toast for hi-hat
+    noiseSource.stop(time + 0.1); 
+    addToast("🎩 HIGH HATTT!!!"); // Updated toast message
   }, [getAudioContext, addToast])
 
   // --- Note to Color Logic ---
@@ -433,7 +433,7 @@ function App() {
     oscillator.start(time)
     oscillator.stop(time + 0.3)
     setBackgroundStyle({ background: noteToGradient(frequency) });
-    addToast(`NOTE: ${frequency.toFixed(0)}Hz`); // Add toast for note
+    addToast("🎵"); // Updated toast message to just emoji
   }, [getAudioContext, noteToGradient, addToast])
 
   const handleLanguageSwitch = () => {
@@ -653,7 +653,7 @@ function App() {
             id={toast.id} 
             message={toast.message}
             onRemove={removeToast}
-            duration={1000} // Display for 1 sec before fade
+            duration={2000} // Increased display duration to 2 sec before fade
           />
         ))}
       </div>

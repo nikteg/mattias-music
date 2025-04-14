@@ -11,14 +11,14 @@
 
 /* Individual toast styling */
 .toast-notification {
-  background-color: rgba(50, 180, 50, 0.85); /* Greenish background */
-  color: white;
-  padding: 12px 20px;
+  background-color: rgba(255, 255, 255, 0.95); /* White background */
+  color: #111; /* Dark text color */
+  padding: 10px 18px; /* Adjust padding slightly */
   margin-top: 10px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);
   font-family: sans-serif;
-  font-size: 1em;
+  font-size: 1.1em; /* Slightly larger font */
   font-weight: bold;
   opacity: 0;
   transform: translateX(100%);
