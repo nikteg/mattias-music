@@ -202,7 +202,6 @@ interface ToastState {
 }
 
 function App() {
-  const [isSwedish, setIsSwedish] = useState(false)
   const [playlistState, setPlaylistState] = useState<'idle' | 'playing'>('idle')
   const [selectedMelody, setSelectedMelody] = useState<MelodyName>(melodyNames[0])
   const [backgroundStyle, setBackgroundStyle] = useState({}); // State for background style
@@ -212,17 +211,22 @@ function App() {
   const loopActiveRef = useRef<boolean>(false) // Ref to control the async loop
   let toastIdCounter = useRef(0); // Counter for unique toast IDs
 
-  // Function to add a new toast
+  // Function to add a new toast and update title
   const addToast = useCallback((message: string) => {
     const id = toastIdCounter.current++;
     const now = new Date();
     const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+    
+    // Add to toast state
     setToasts((prevToasts) => {
-      // Add new toast to the START of the array for top-right stacking
       const newToast = { id, message, timestamp };
-      return [newToast, ...prevToasts];
+      return [newToast, ...prevToasts]; // Add to beginning for top-right stack
     });
-  }, []);
+
+    // Update window title
+    document.title = message; 
+
+  }, []); // End of useCallback dependency array
 
   // Function to remove a toast by ID
   const removeToast = useCallback((id: number) => {
@@ -391,21 +395,6 @@ function App() {
     addToast(toastMessage);
   }, [getAudioContext, noteToGradient, addToast])
 
-  const handleLanguageSwitch = () => {
-    setIsSwedish(prev => !prev)
-    const audioContext = getAudioContext()
-    const time = audioContext.currentTime
-    const oscillator = audioContext.createOscillator()
-    const gainNode = audioContext.createGain()
-    oscillator.connect(gainNode)
-    gainNode.connect(audioContext.destination)
-    oscillator.frequency.value = isSwedish ? NOTES.E4 : NOTES.G4
-    gainNode.gain.setValueAtTime(0.1, time)
-    gainNode.gain.exponentialRampToValueAtTime(0.00001, time + 0.3)
-    oscillator.start(time)
-    oscillator.stop(time + 0.3)
-  }
-
   // --- Playlist and Melody Playing Logic ---
   const speak = (text: string): Promise<void> => {
     return new Promise((resolve) => {
@@ -482,16 +471,16 @@ function App() {
       
       // Play melody note and trigger combined toast
       playNote(melody[i], currentDrumSounds); // Pass drum sounds to playNote
-      setIsSwedish(prev => !prev); 
       
       // Wait for the melody note duration
       await new Promise(resolve => setTimeout(resolve, noteDuration));
     }
-    // Reset background after melody finishes if loop is stopping
+    // Reset background and title after melody finishes IF loop is stopping
     if (!loopActiveRef.current) {
-      setBackgroundStyle({});
+        setBackgroundStyle({});
+        document.title = "Mattias Music"; // Reset title
     }
-  }, [playKick, playSnare, playNote, speak, announceMelodyName, playHiHat]); // Added playHiHat dependency
+  }, [playKick, playSnare, playHiHat, playNote, speak, announceMelodyName]);
 
   const startPlaylistLoop = useCallback(async () => {
     if (playlistState === 'playing') return; // Prevent multiple loops
@@ -523,9 +512,10 @@ function App() {
   const stopPlaylistLoop = useCallback(() => {
     loopActiveRef.current = false;
     if ('speechSynthesis' in window) {
-      speechSynthesis.cancel(); // Stop any ongoing speech
+      speechSynthesis.cancel();
     }
-    setBackgroundStyle({}); // Reset background when stopping playlist
+    setBackgroundStyle({});
+    document.title = "Mattias Music"; // Reset title when stopping
   }, []);
 
   const handlePlayStopClick = () => {
@@ -536,12 +526,26 @@ function App() {
     }
   };
 
-  // Cleanup speech synthesis on unmount
+  // Reset title on initial mount or when idle
   useEffect(() => {
+    if (playlistState === 'idle') {
+        document.title = "Mattias Music";
+    }
+  }, [playlistState]);
+
+  // Cleanup speech synthesis and set initial title on mount
+  useEffect(() => {
+    document.title = "Mattias Music"; // Set initial title
+    // Cleanup function
     return () => {
-      stopPlaylistLoop(); // Ensure cleanup on unmount
+      // Optional: Stop speech synth on unmount if needed
+      if ('speechSynthesis' in window) {
+          speechSynthesis.cancel();
+      }
+      // Reset title on unmount ( belt-and-suspenders, stopPlaylistLoop might cover it)
+      // document.title = "Mattias Music"; 
     };
-  }, [stopPlaylistLoop]);
+  }, []); // Run only on mount
 
   // Get note names for the selected melody
   const currentMelodyNotes = (MELODIES[selectedMelody] || []).map(
@@ -552,22 +556,7 @@ function App() {
     <div className="container" style={backgroundStyle}>
       {/* New wrapper for centered content */}
       <div className="content-wrapper">
-        <h1>
-          {/* Keep flags in H1, maybe? Or move them down? Keeping here for now. */}
-          {isSwedish ? '🇸🇪' : '🇬🇧'}
-        </h1>
-        {/* New text element for the language-specific phrase */}
-        <h2 className="language-text">
-          {isSwedish ? 'Mattias suger' : 'Hi Mattias'}
-        </h2>
         <div className="button-container">
-          <button 
-            onClick={handleLanguageSwitch} 
-            className="language-button" 
-            disabled={playlistState === 'playing'}
-          >
-            {isSwedish ? '🇬🇧 Switch to English' : '🇸🇪 Switch to Swedish'}
-          </button>
           <select 
             value={selectedMelody}
             onChange={(e) => {
