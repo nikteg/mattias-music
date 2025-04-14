@@ -139,3 +139,23 @@ h1 {
 .read-the-docs {
   color: #888;
 }
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1); /* Slight background for visibility */
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  cursor: pointer; /* Make the whole area clickable */
+}
+
+.checkbox-container label {
+  cursor: pointer; /* Ensure label is clickable */
+  user-select: none; /* Prevent text selection */
+}
+
+.checkbox-container input[type="checkbox"] {
+  cursor: pointer;
+  /* Optional: Style checkbox itself if needed */
+}

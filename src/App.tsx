@@ -189,6 +189,7 @@ function App() {
   const [playlistState, setPlaylistState] = useState<'idle' | 'playing'>('idle')
   const [selectedMelody, setSelectedMelody] = useState<MelodyName>(melodyNames[0])
   const [backgroundStyle, setBackgroundStyle] = useState({}); // State for background style
+  const [announceMelodyName, setAnnounceMelodyName] = useState<boolean>(true); // State for announcement
   const audioContextRef = useRef<AudioContext | null>(null)
   const loopActiveRef = useRef<boolean>(false) // Ref to control the async loop
 
@@ -356,8 +357,13 @@ function App() {
   const playSingleMelody = useCallback(async (melodyName: MelodyName) => {
     // Ensure loop hasn't been stopped before speaking
     if (!loopActiveRef.current) return;
-    await speak(`Playing: ${melodyName}`);
-    await new Promise(resolve => setTimeout(resolve, 100)); 
+    
+    // Only speak if the checkbox is checked
+    if (announceMelodyName) {
+      await speak(`Playing: ${melodyName}`);
+      // Wait a tiny bit more after speech, just in case
+      await new Promise(resolve => setTimeout(resolve, 100)); 
+    }
 
     const melody = MELODIES[melodyName]
     const noteDuration = 300 // Melody note duration (BACK TO ORIGINAL SPEED)
@@ -393,7 +399,7 @@ function App() {
     if (!loopActiveRef.current) {
       setBackgroundStyle({});
     }
-  }, [playKick, playSnare, playNote, speak]); 
+  }, [playKick, playSnare, playNote, speak, announceMelodyName]); // Added announceMelodyName dependency
 
   const startPlaylistLoop = useCallback(async () => {
     if (playlistState === 'playing') return; // Prevent multiple loops
@@ -449,7 +455,7 @@ function App() {
     // Apply the background style to the main container
     <div className="container" style={backgroundStyle}>
       <h1>
-        {isSwedish ? '🇸�� Mattias suger' : '🇬🇧 Hi Mattias'}
+        {isSwedish ? '🇸🇪 Mattias suger' : '🇬🇧 Hi Mattias'}
       </h1>
       <div className="button-container">
         <button 
@@ -480,6 +486,16 @@ function App() {
         >
           {playlistState === 'playing' ? '⏹️ Stop Playlist' : '▶️ Play All'}
         </button>
+        <div className="checkbox-container">
+          <input 
+            type="checkbox" 
+            id="announceCheckbox"
+            checked={announceMelodyName}
+            onChange={(e) => setAnnounceMelodyName(e.target.checked)}
+            disabled={playlistState === 'playing'} // Optionally disable during playback
+          />
+          <label htmlFor="announceCheckbox">Announce Melody</label>
+        </div>
       </div>
     </div>
   )
