@@ -166,3 +166,16 @@ h1 {
   cursor: pointer;
   /* Optional: Style checkbox itself if needed */
 }
+
+.placeholder-text-container {
+  margin-top: 2rem; /* Space above the text area */
+  max-width: 800px; /* Limit width for readability */
+  width: 90%; /* Responsive width */
+  text-align: left; /* Align text left for readability */
+  color: #ccc; /* Lighter text color */
+  line-height: 1.6; /* Improve line spacing */
+}
+
+.placeholder-text-container p {
+  margin-bottom: 1em; /* Space between paragraphs */
+}
