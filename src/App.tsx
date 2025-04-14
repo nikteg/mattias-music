@@ -460,8 +460,13 @@ function App() {
     // Apply the background style to the main container
     <div className="container" style={backgroundStyle}>
       <h1>
-        {isSwedish ? '🇸🇪 Mattias suger' : '🇬🇧 Hi Mattias'}
+        {/* Keep flags in H1, maybe? Or move them down? Keeping here for now. */}
+        {isSwedish ? '🇸🇪' : '🇬🇧'}
       </h1>
+      {/* New text element for the language-specific phrase */}
+      <h2 className="language-text">
+        {isSwedish ? 'Mattias suger' : 'Hi Mattias'}
+      </h2>
       <div className="button-container">
         <button 
           onClick={handleLanguageSwitch} 
