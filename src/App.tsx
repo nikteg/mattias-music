@@ -266,29 +266,40 @@ function App() {
   const playSingleMelody = useCallback(async (melodyName: MelodyName) => {
     // Ensure loop hasn't been stopped before speaking
     if (!loopActiveRef.current) return;
-    
     await speak(`Playing: ${melodyName}`);
-    
-    // Wait a tiny bit more after speech, just in case
     await new Promise(resolve => setTimeout(resolve, 100)); 
 
     const melody = MELODIES[melodyName]
-    const noteDuration = 600 // Duration of each note/beat in milliseconds (HALVED SPEED)
+    const noteDuration = 300 // Melody note duration (BACK TO ORIGINAL SPEED)
 
     for (let i = 0; i < melody.length; i++) {
-      if (!loopActiveRef.current) break; // Check if loop was stopped during play
+      if (!loopActiveRef.current) break; 
       
-      const beat = i % 4 // Current beat in a 4/4 measure (0, 1, 2, 3)
+      // --- Drum Logic (Half-Time) ---
+      // Only trigger drums on even melody beats (every 600ms)
+      if (i % 2 === 0) {
+        const drumBeatIndex = Math.floor(i / 2); // Index for the drum pattern
+        const drumBeatInMeasure = drumBeatIndex % 4; // Beat within the 4/4 drum measure
 
-      if (beat === 0 || beat === 2) playKick();
-      if (beat === 1 || beat === 3) playSnare();
+        // Play kick on beats 1 & 3 of the drum pattern
+        if (drumBeatInMeasure === 0 || drumBeatInMeasure === 2) {
+          playKick();
+        }
+        // Play snare on beats 2 & 4 of the drum pattern
+        else if (drumBeatInMeasure === 1 || drumBeatInMeasure === 3) {
+          playSnare();
+        }
+      }
+      // --- End Drum Logic ---
       
+      // Play melody note every 300ms
       playNote(melody[i]);
       setIsSwedish(prev => !prev);
       
+      // Wait for the melody note duration
       await new Promise(resolve => setTimeout(resolve, noteDuration));
     }
-  }, [playKick, playSnare, playNote, getAudioContext, speak]); // Added speak dependency
+  }, [playKick, playSnare, playNote, getAudioContext, speak]); 
 
   const startPlaylistLoop = useCallback(async () => {
     if (playlistState === 'playing') return; // Prevent multiple loops
