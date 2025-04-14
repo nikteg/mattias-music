@@ -576,18 +576,20 @@ function App() {
             onClick={handlePlayStopClick} 
             className={`melody-button ${playlistState === 'playing' ? 'playing' : ''}`}
           >
-            {playlistState === 'playing' ? '⏹️ Stop Playlist' : '▶️ Play All'}
+            {playlistState === 'playing' ? '⏹️ Pause' : '▶️ Play'}
           </button>
-          <div className="checkbox-container">
-            <input 
-              type="checkbox" 
-              id="announceCheckbox"
-              checked={announceMelodyName}
-              onChange={(e) => setAnnounceMelodyName(e.target.checked)}
-              disabled={playlistState === 'playing'} // Optionally disable during playback
-            />
-            <label htmlFor="announceCheckbox">Announce Melody</label>
-          </div>
+        </div> {/* End of button-container */}
+
+        {/* MOVE Checkbox here */}
+        <div className="checkbox-container">
+          <input 
+            type="checkbox" 
+            id="announceCheckbox"
+            checked={announceMelodyName}
+            onChange={(e) => setAnnounceMelodyName(e.target.checked)}
+            disabled={playlistState === 'playing'} 
+          />
+          <label htmlFor="announceCheckbox">Announce Melody</label>
         </div>
 
         {/* Display Current Melody Name */}

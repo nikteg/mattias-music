@@ -144,11 +144,16 @@
 .checkbox-container {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   background-color: rgba(255, 255, 255, 0.1);
   padding: 0.5em 1em;
   border-radius: 8px;
   cursor: pointer;
+  margin-top: 1.5rem;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .checkbox-container label {
