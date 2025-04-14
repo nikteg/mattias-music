@@ -396,7 +396,6 @@ function App() {
       
       // Play melody note every 300ms
       playNote(melody[i]);
-      setIsSwedish(prev => !prev);
       
       // Wait for the melody note duration
       await new Promise(resolve => setTimeout(resolve, noteDuration));
