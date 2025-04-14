@@ -184,6 +184,14 @@ const MELODIES = {
 type MelodyName = keyof typeof MELODIES
 const melodyNames = Object.keys(MELODIES) as MelodyName[]
 
+// Sample placeholder text paragraphs
+const placeholderParagraphs = [
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattias enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "Duis aute irure dolor in Mattias in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+  "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
+  "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut Mattias aliquid ex ea commodi consequatur?"
+];
+
 function App() {
   const [isSwedish, setIsSwedish] = useState(false)
   const [playlistState, setPlaylistState] = useState<'idle' | 'playing'>('idle')
@@ -457,7 +465,6 @@ function App() {
   }, [stopPlaylistLoop]);
 
   return (
-    // Apply the background style to the main container
     <div className="container" style={backgroundStyle}>
       <h1>
         {/* Keep flags in H1, maybe? Or move them down? Keeping here for now. */}
@@ -506,6 +513,13 @@ function App() {
           />
           <label htmlFor="announceCheckbox">Announce Melody</label>
         </div>
+      </div>
+
+      {/* New container for placeholder text */}
+      <div className="placeholder-text-container">
+        {placeholderParagraphs.map((text, index) => (
+          <p key={index}>{text}</p>
+        ))}
       </div>
     </div>
   )
