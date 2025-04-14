@@ -326,6 +326,45 @@ function App() {
     bodyOsc.stop(time + 0.1); // Stop body based on its decay
   }, [getAudioContext])
 
+  const playHiHat = useCallback(() => {
+    const audioContext = getAudioContext()
+    const time = audioContext.currentTime
+
+    // Noise Generation
+    const bufferSize = audioContext.sampleRate * 0.1; // Short duration
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const output = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1; // White noise
+    }
+    const noiseSource = audioContext.createBufferSource();
+    noiseSource.buffer = buffer;
+
+    // Filtering for Hi-Hat Sound
+    const bandpass = audioContext.createBiquadFilter();
+    bandpass.type = 'bandpass';
+    bandpass.frequency.value = 10000; // High frequency focus
+    bandpass.Q.value = 1.5;
+    const highpass = audioContext.createBiquadFilter();
+    highpass.type = 'highpass';
+    highpass.frequency.value = 7000; // Cut lows sharply
+
+    // Volume Envelope
+    const gainNode = audioContext.createGain();
+    gainNode.gain.setValueAtTime(0.3, time); // Relatively quiet start
+    gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.05); // Very fast decay
+
+    // Connect nodes
+    noiseSource.connect(bandpass);
+    bandpass.connect(highpass);
+    highpass.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Play
+    noiseSource.start(time);
+    noiseSource.stop(time + 0.1); // Stop slightly after decay finishes
+  }, [getAudioContext])
+
   // --- Note to Color Logic ---
   const noteToGradient = (frequency: number): string => {
     // Map frequency (e.g., 130Hz to 1050Hz) to HSL values
@@ -442,6 +481,9 @@ function App() {
         const drumBeatIndex = Math.floor(i / 2); // Index for the drum pattern
         const drumBeatInMeasure = drumBeatIndex % 4; // Beat within the 4/4 drum measure
 
+        // Play Hi-Hat on every drum beat
+        playHiHat();
+
         // Play kick on beats 1 & 3 of the drum pattern
         if (drumBeatInMeasure === 0 || drumBeatInMeasure === 2) {
           playKick();
@@ -464,7 +506,7 @@ function App() {
     if (!loopActiveRef.current) {
       setBackgroundStyle({});
     }
-  }, [playKick, playSnare, playNote, speak, announceMelodyName]); // Added announceMelodyName dependency
+  }, [playKick, playSnare, playNote, speak, announceMelodyName, playHiHat]); // Added playHiHat dependency
 
   const startPlaylistLoop = useCallback(async () => {
     if (playlistState === 'playing') return; // Prevent multiple loops
