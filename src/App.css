@@ -183,10 +183,11 @@ h1 {
 }
 
 .svg-notation-wrapper {
-  width: 100%; /* Allow SVG to potentially scroll horizontally */
-  overflow-x: auto; /* Add scroll if SVG is wider than container */
+  width: 100%; /* Take available width */
   margin-top: 2rem;
   padding-bottom: 1rem; /* Space below SVG */
+  display: flex; /* Helps center the SVG if its width is fixed */
+  justify-content: center; /* Center the SVG horizontally */
 }
 
 /* Toast CSS remains below */

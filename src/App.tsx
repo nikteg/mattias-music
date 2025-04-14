@@ -3,6 +3,7 @@ import './App.css'
 import ToastNotification from './ToastNotification'; // Import the new component
 import './ToastNotification.css'; // Import toast CSS here too for the container
 import React from 'react'; // Make sure React is imported if not already
+import MusicNotationSVG from './MusicNotationSVG'; // Import the new component
 
 // Musical notes frequencies
 const NOTES = {
@@ -258,52 +259,6 @@ interface ToastState {
   id: number;
   message: string;
   timestamp: string; // Add timestamp field
-}
-
-// --- SVG Notation Constants and Helpers ---
-const STAFF_LINES = 5;
-const LINE_HEIGHT = 12; // Space between staff lines
-const STAFF_HEIGHT = (STAFF_LINES - 1) * LINE_HEIGHT;
-const CLEF_WIDTH = 40;
-const NOTE_RADIUS = LINE_HEIGHT / 2;
-const STEM_LENGTH = LINE_HEIGHT * 3.5;
-const ACCIDENTAL_WIDTH = 15;
-const NOTE_SPACING = 35; // Horizontal space per note
-const TOP_MARGIN = 40; // Space above staff
-const LEFT_MARGIN = 15;
-const BAR_LINE_INTERVAL = 8; // Draw bar line every 8 notes
-
-// Map note name (like 'C4', 'G#5') to vertical steps from bottom line (G3 for treble clef)
-// This is simplified and assumes treble clef where G3 is bottom line space, E4 is bottom line etc.
-const noteSteps: { [key: string]: number } = {
-    'C3': -4, 'D3': -3, 'E3': -2, 'F3': -1, 'G3': 0, 'A3': 1, 'B3': 2, 
-    'C4': 3, 'D4': 4, 'E4': 5, 'F4': 6, 'G4': 7, 'A4': 8, 'B4': 9, 
-    'C5': 10, 'D5': 11, 'E5': 12, 'F5': 13, 'G5': 14, 'A5': 15, 'B5': 16,
-    'C6': 17, 'D6': 18, 'E6': 19, 'F6': 20, 'G6': 21, 'A6': 22, 'B6': 23,
-};
-
-function getNoteYPosition(noteName: string): number | null {
-    const baseNote = noteName.substring(0, noteName.length - 1); // e.g., 'C#', 'G', 'Bb'
-    const octave = parseInt(noteName.substring(noteName.length - 1), 10);
-    const noteLetter = baseNote.charAt(0);
-    const accidental = baseNote.length > 1 ? baseNote.charAt(1) : null;
-
-    // Find the step for the natural note in the same octave
-    const naturalNoteName = `${noteLetter}${octave}`;
-    const step = noteSteps[naturalNoteName];
-
-    if (step === undefined) return null; // Note out of range
-
-    // Calculate Y based on steps from bottom line (G3)
-    // Top line is E5 (step 9), middle is B4 (step 7)
-    const y = TOP_MARGIN + STAFF_HEIGHT - (step * (LINE_HEIGHT / 2));
-    return y;
-}
-
-function getAccidentalSymbol(noteName: string): string | null {
-    if (noteName.includes('#')) return '♯'; // Sharp symbol
-    if (noteName.includes('b')) return '♭'; // Flat symbol
-    return null;
 }
 
 function App() {
@@ -660,73 +615,6 @@ function App() {
   const currentMelodyNotes = (MELODIES[selectedMelody] || []).map(
     freq => frequencyToNoteName[Math.round(freq * 100) / 100] || '?');
 
-  // --- Generate SVG Elements ---
-  const renderNotationSVG = () => {
-    const svgElements: React.ReactNode[] = [];
-    const totalNotes = currentMelodyNotes.length;
-    if (totalNotes === 0) return null;
-
-    const svgWidth = LEFT_MARGIN + CLEF_WIDTH + (totalNotes * NOTE_SPACING) + LEFT_MARGIN;
-    const svgHeight = TOP_MARGIN * 2 + STAFF_HEIGHT;
-
-    // Staff lines
-    for (let i = 0; i < STAFF_LINES; i++) {
-      const y = TOP_MARGIN + i * LINE_HEIGHT;
-      svgElements.push(<line key={`staff-${i}`} x1={LEFT_MARGIN} y1={y} x2={svgWidth - LEFT_MARGIN} y2={y} stroke="#ccc" strokeWidth="1" />);
-    }
-
-    // Treble Clef (using Unicode character)
-    svgElements.push(<text key="clef" x={LEFT_MARGIN + 5} y={TOP_MARGIN + STAFF_HEIGHT / 2 + 20} fontSize="55" fill="#ccc" fontFamily="serif">𝄞</text>);
-
-    let currentX = LEFT_MARGIN + CLEF_WIDTH;
-
-    // Notes and accidentals
-    currentMelodyNotes.forEach((noteName, index) => {
-      const y = getNoteYPosition(noteName);
-      if (y === null) return; // Skip if note out of range
-
-      const accidental = getAccidentalSymbol(noteName);
-      let noteX = currentX;
-
-      // Draw accidental if present
-      if (accidental) {
-          svgElements.push(
-              <text key={`acc-${index}`} x={noteX - ACCIDENTAL_WIDTH} y={y + 5} fontSize="20" fill="#eee">{accidental}</text>
-          );
-      }
-
-      // Notehead (circle)
-      svgElements.push(<circle key={`note-${index}`} cx={noteX} cy={y} r={NOTE_RADIUS} fill="#eee" />);
-
-      // Stem
-      const stemUp = y > (TOP_MARGIN + STAFF_HEIGHT / 2); // Stem up if below middle line
-      const stemY1 = y;
-      const stemY2 = stemUp ? y - STEM_LENGTH : y + STEM_LENGTH;
-      const stemX = stemUp ? noteX + NOTE_RADIUS : noteX - NOTE_RADIUS; // Attach stem to side
-      svgElements.push(<line key={`stem-${index}`} x1={stemX} y1={stemY1} x2={stemX} y2={stemY2} stroke="#eee" strokeWidth="1.5" />);
-        
-      // Bar line (simple)
-      if ((index + 1) % BAR_LINE_INTERVAL === 0 && index < totalNotes - 1) {
-          const barX = noteX + NOTE_SPACING / 2;
-          svgElements.push(<line key={`bar-${index}`} x1={barX} y1={TOP_MARGIN} x2={barX} y2={TOP_MARGIN + STAFF_HEIGHT} stroke="#ccc" strokeWidth="1" />);
-      }
-
-      currentX += NOTE_SPACING;
-    });
-    
-    // Final bar line
-    const finalBarX = currentX - NOTE_SPACING / 2;
-    svgElements.push(<line key="final-bar-thin" x1={finalBarX-3} y1={TOP_MARGIN} x2={finalBarX-3} y2={TOP_MARGIN + STAFF_HEIGHT} stroke="#ccc" strokeWidth="1" />);
-    svgElements.push(<line key="final-bar-thick" x1={finalBarX} y1={TOP_MARGIN} x2={finalBarX} y2={TOP_MARGIN + STAFF_HEIGHT} stroke="#ccc" strokeWidth="4" />);
-
-
-    return (
-      <svg width={svgWidth} height={svgHeight} style={{ marginTop: '2rem', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-        {svgElements}
-      </svg>
-    );
-  };
-
   return (
     <div className="container" style={backgroundStyle}>
       <h1>
@@ -785,9 +673,9 @@ function App() {
         ))}
       </div>
 
-      {/* SVG Music Notation */}
+      {/* Use the new MusicNotationSVG component */}
       <div className="svg-notation-wrapper">
-         {renderNotationSVG()}
+         <MusicNotationSVG melodyNotes={currentMelodyNotes} notes={NOTES} />
       </div>
 
       {/* Toast Container - Renders all active toasts */}
