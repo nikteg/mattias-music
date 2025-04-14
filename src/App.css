@@ -26,6 +26,14 @@
 h1 {
   font-size: 2.5em;
   transition: transform 0.3s ease;
+  margin-bottom: 0;
+}
+
+.language-text {
+  font-size: 2em;
+  margin-top: 0.5em;
+  margin-bottom: 1.5em;
+  font-weight: bold;
 }
 
 .language-button,
