@@ -522,7 +522,16 @@ function App() {
     if (playlistState === 'playing') {
       stopPlaylistLoop();
     } else {
-      startPlaylistLoop();
+      // Ensure AudioContext is active before starting playback
+      const audioContext = getAudioContext(); // Creates if null
+      if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+          console.log("AudioContext resumed!");
+          startPlaylistLoop(); // Start loop after context is resumed
+        }).catch(err => console.error("Error resuming AudioContext:", err));
+      } else {
+        startPlaylistLoop(); // Start loop if already running
+      }
     }
   };
 
