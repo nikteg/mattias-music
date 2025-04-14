@@ -273,7 +273,7 @@ function App() {
     await new Promise(resolve => setTimeout(resolve, 100)); 
 
     const melody = MELODIES[melodyName]
-    const noteDuration = 300 // Duration of each note/beat in milliseconds
+    const noteDuration = 600 // Duration of each note/beat in milliseconds (HALVED SPEED)
 
     for (let i = 0; i < melody.length; i++) {
       if (!loopActiveRef.current) break; // Check if loop was stopped during play
