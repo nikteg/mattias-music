@@ -1,9 +1,8 @@
+import MusicNotationSVG from './MusicNotationSVG'; // Import the new component
 import { useState, useCallback, useRef, useEffect } from 'react'
 import './App.css'
 import ToastNotification from './ToastNotification'; // Import the new component
 import './ToastNotification.css'; // Import toast CSS here too for the container
-import React from 'react'; // Make sure React is imported if not already
-import MusicNotationSVG from './MusicNotationSVG'; // Import the new component
 
 // Musical notes frequencies
 const NOTES = {
