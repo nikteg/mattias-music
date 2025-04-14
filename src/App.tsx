@@ -305,8 +305,7 @@ function App() {
 
     oscillator.start(time)
     oscillator.stop(time + 0.15)
-    addToast("💥 KICK!"); // Updated toast message
-  }, [getAudioContext, addToast])
+  }, [getAudioContext])
 
   const playSnare = useCallback(() => {
     const audioContext = getAudioContext()
@@ -353,8 +352,7 @@ function App() {
     bodyOsc.start(time);
     noiseSource.stop(time + 0.15); // Stop noise based on its decay
     bodyOsc.stop(time + 0.1); 
-    addToast("✨ SNARE!"); // Updated toast message
-  }, [getAudioContext, addToast])
+  }, [getAudioContext])
 
   const playHiHat = useCallback(() => {
     const audioContext = getAudioContext()
@@ -393,8 +391,7 @@ function App() {
     // Play
     noiseSource.start(time);
     noiseSource.stop(time + 0.1); 
-    addToast("🎩 HIGH HATTT!!!"); // Updated toast message
-  }, [getAudioContext, addToast])
+  }, [getAudioContext])
 
   // --- Note to Color Logic ---
   const noteToGradient = (frequency: number): string => {
@@ -426,8 +423,8 @@ function App() {
     // Alternative: linear-gradient(135deg, hsl(${hue1}, ${saturation}%, ${lightness}%), hsl(${hue2}, ${saturation}%, ${lightness-10}%), hsl(${hue3}, ${saturation}%, ${lightness-5}%))`
   };
 
-  const playNote = useCallback((frequency: number) => {
-    // Simplified playNote - only plays the tone, drums are handled by rhythm logic
+  // Accept optional array of drum sound names
+  const playNote = useCallback((frequency: number, drumSounds: string[] = []) => {
     const audioContext = getAudioContext()
     const time = audioContext.currentTime
     const oscillator = audioContext.createOscillator()
@@ -440,7 +437,13 @@ function App() {
     oscillator.start(time)
     oscillator.stop(time + 0.3)
     setBackgroundStyle({ background: noteToGradient(frequency) });
-    addToast("🎵"); // Updated toast message to just emoji
+    
+    // Construct combined toast message
+    let toastMessage = "🎵"; // Start with note emoji
+    if (drumSounds.length > 0) {
+      toastMessage += ` + ${drumSounds.join(' + ')}`;
+    }
+    addToast(toastMessage);
   }, [getAudioContext, noteToGradient, addToast])
 
   const handleLanguageSwitch = () => {
@@ -505,8 +508,10 @@ function App() {
     for (let i = 0; i < melody.length; i++) {
       if (!loopActiveRef.current) break; 
       
+      const currentDrumSounds: string[] = []; // Array to hold sounds for this beat
+
       // --- Drum Logic (Half-Time) ---
-      // Only trigger drums on even melody beats (every 600ms)
+      // Check if it's a drum beat
       if (i % 2 === 0) {
         const drumBeatIndex = Math.floor(i / 2); // Index for the drum pattern
         const drumBeatInMeasure = drumBeatIndex % 4; // Beat within the 4/4 drum measure
@@ -514,22 +519,25 @@ function App() {
         // Play Kick on beat 1 (index 0)
         if (drumBeatInMeasure === 0) {
           playKick();
+          currentDrumSounds.push("💥"); // Add kick identifier
         }
         // Play Snare on beat 3 (index 2)
         else if (drumBeatInMeasure === 2) {
           playSnare();
+          currentDrumSounds.push("✨"); // Add snare identifier
         }
 
         // Play Hi-Hat on beats 2 & 4 (index 1 and 3)
         if (drumBeatInMeasure === 1 || drumBeatInMeasure === 3) {
           playHiHat();
+          currentDrumSounds.push("🎩"); // Add hi-hat identifier
         }
       }
       // --- End Drum Logic ---
       
-      // Play melody note every 300ms
-      playNote(melody[i]);
-      setIsSwedish(prev => !prev); // RE-ADDED: Toggle language state with notes
+      // Play melody note and trigger combined toast
+      playNote(melody[i], currentDrumSounds); // Pass drum sounds to playNote
+      setIsSwedish(prev => !prev); 
       
       // Wait for the melody note duration
       await new Promise(resolve => setTimeout(resolve, noteDuration));
