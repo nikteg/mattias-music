@@ -189,7 +189,7 @@ function App() {
   const [playlistState, setPlaylistState] = useState<'idle' | 'playing'>('idle')
   const [selectedMelody, setSelectedMelody] = useState<MelodyName>(melodyNames[0])
   const [backgroundStyle, setBackgroundStyle] = useState({}); // State for background style
-  const [announceMelodyName, setAnnounceMelodyName] = useState<boolean>(true); // State for announcement
+  const [announceMelodyName, setAnnounceMelodyName] = useState<boolean>(false); // Default to false (unchecked)
   const audioContextRef = useRef<AudioContext | null>(null)
   const loopActiveRef = useRef<boolean>(false) // Ref to control the async loop
 
