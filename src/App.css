@@ -1,5 +1,4 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
   text-align: center;
 }
@@ -8,11 +7,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
   min-height: 100vh;
-  padding: 2rem;
+  width: 100%;
   box-sizing: border-box;
   transition: background 0.5s ease-out;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  max-width: 1280px;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
 .button-container {
@@ -151,43 +162,42 @@ h1 {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: rgba(255, 255, 255, 0.1); /* Slight background for visibility */
+  background-color: rgba(255, 255, 255, 0.1);
   padding: 0.5em 1em;
   border-radius: 8px;
-  cursor: pointer; /* Make the whole area clickable */
+  cursor: pointer;
 }
 
 .checkbox-container label {
-  cursor: pointer; /* Ensure label is clickable */
-  user-select: none; /* Prevent text selection */
+  cursor: pointer;
+  user-select: none;
 }
 
 .checkbox-container input[type="checkbox"] {
   cursor: pointer;
-  /* Optional: Style checkbox itself if needed */
 }
 
 .placeholder-text-container {
-  margin-top: 2rem; 
-  max-width: 800px; 
-  width: 90%; 
-  text-align: left; 
-  color: #ddd; /* Slightly brighter text */
-  line-height: 1.7; /* Increase line spacing a bit more */
-  font-size: 1.3em; /* Increase base font size */
-  font-family: 'Comic Sans MS', 'Chalkduster', 'cursive', sans-serif; /* Fun font stack */
+  margin-top: 2rem;
+  max-width: 800px;
+  width: 90%;
+  text-align: left;
+  color: #ddd;
+  line-height: 1.7;
+  font-size: 1.3em;
+  font-family: 'Comic Sans MS', 'Chalkduster', 'cursive', sans-serif;
 }
 
 .placeholder-text-container p {
-  margin-bottom: 1.2em; /* Slightly more space between paragraphs */
+  margin-bottom: 1.2em;
 }
 
 .svg-notation-wrapper {
-  width: 100%; /* Take available width */
+  width: 100%;
   margin-top: 2rem;
-  padding-bottom: 1rem; /* Space below SVG */
-  display: flex; /* Helps center the SVG if its width is fixed */
-  justify-content: center; /* Center the SVG horizontally */
+  padding-bottom: 1rem;
+  display: flex;
+  justify-content: center;
 }
 
 /* Toast CSS remains below */

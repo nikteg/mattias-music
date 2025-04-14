@@ -616,69 +616,73 @@ function App() {
     freq => frequencyToNoteName[Math.round(freq * 100) / 100] || '?');
 
   return (
+    // Outer container for background
     <div className="container" style={backgroundStyle}>
-      <h1>
-        {/* Keep flags in H1, maybe? Or move them down? Keeping here for now. */}
-        {isSwedish ? '🇸🇪' : '🇬🇧'}
-      </h1>
-      {/* New text element for the language-specific phrase */}
-      <h2 className="language-text">
-        {isSwedish ? 'Mattias suger' : 'Hi Mattias'}
-      </h2>
-      <div className="button-container">
-        <button 
-          onClick={handleLanguageSwitch} 
-          className="language-button" 
-          disabled={playlistState === 'playing'}
-        >
-          {isSwedish ? '🇬🇧 Switch to English' : '🇸🇪 Switch to Swedish'}
-        </button>
-        <select 
-          value={selectedMelody}
-          onChange={(e) => {
-            // Only allow changing selection when idle
-            if (playlistState === 'idle') {
-              setSelectedMelody(e.target.value as MelodyName)
-            }
-          }}
-          className="melody-select"
-          disabled={playlistState === 'playing'}
-        >
-          {melodyNames.map(name => (
-            <option key={name} value={name}>{name}</option>
-          ))}
-        </select>
-        <button 
-          onClick={handlePlayStopClick} 
-          className={`melody-button ${playlistState === 'playing' ? 'playing' : ''}`}
-        >
-          {playlistState === 'playing' ? '⏹️ Stop Playlist' : '▶️ Play All'}
-        </button>
-        <div className="checkbox-container">
-          <input 
-            type="checkbox" 
-            id="announceCheckbox"
-            checked={announceMelodyName}
-            onChange={(e) => setAnnounceMelodyName(e.target.checked)}
-            disabled={playlistState === 'playing'} // Optionally disable during playback
-          />
-          <label htmlFor="announceCheckbox">Announce Melody</label>
+      {/* New wrapper for centered content */}
+      <div className="content-wrapper">
+        <h1>
+          {/* Keep flags in H1, maybe? Or move them down? Keeping here for now. */}
+          {isSwedish ? '🇸🇪' : '🇬🇧'}
+        </h1>
+        {/* New text element for the language-specific phrase */}
+        <h2 className="language-text">
+          {isSwedish ? 'Mattias suger' : 'Hi Mattias'}
+        </h2>
+        <div className="button-container">
+          <button 
+            onClick={handleLanguageSwitch} 
+            className="language-button" 
+            disabled={playlistState === 'playing'}
+          >
+            {isSwedish ? '🇬🇧 Switch to English' : '🇸🇪 Switch to Swedish'}
+          </button>
+          <select 
+            value={selectedMelody}
+            onChange={(e) => {
+              // Only allow changing selection when idle
+              if (playlistState === 'idle') {
+                setSelectedMelody(e.target.value as MelodyName)
+              }
+            }}
+            className="melody-select"
+            disabled={playlistState === 'playing'}
+          >
+            {melodyNames.map(name => (
+              <option key={name} value={name}>{name}</option>
+            ))}
+          </select>
+          <button 
+            onClick={handlePlayStopClick} 
+            className={`melody-button ${playlistState === 'playing' ? 'playing' : ''}`}
+          >
+            {playlistState === 'playing' ? '⏹️ Stop Playlist' : '▶️ Play All'}
+          </button>
+          <div className="checkbox-container">
+            <input 
+              type="checkbox" 
+              id="announceCheckbox"
+              checked={announceMelodyName}
+              onChange={(e) => setAnnounceMelodyName(e.target.checked)}
+              disabled={playlistState === 'playing'} // Optionally disable during playback
+            />
+            <label htmlFor="announceCheckbox">Announce Melody</label>
+          </div>
         </div>
-      </div>
 
-      {/* New container for placeholder text */}
-      <div className="placeholder-text-container">
-        {currentParagraphs.map((text: string, index: number) => (
-          <p key={index}>{text}</p>
-        ))}
-      </div>
+        {/* Placeholder text container (now inside content-wrapper) */}
+        <div className="placeholder-text-container">
+          {currentParagraphs.map((text: string, index: number) => (
+            <p key={index}>{text}</p>
+          ))}
+        </div>
 
-      {/* Use the new MusicNotationSVG component */}
-      <div className="svg-notation-wrapper">
-         <MusicNotationSVG melodyNotes={currentMelodyNotes} notes={NOTES} />
-      </div>
+        {/* SVG Music Notation (now inside content-wrapper) */}
+        <div className="svg-notation-wrapper">
+          <MusicNotationSVG melodyNotes={currentMelodyNotes} notes={NOTES} />
+        </div>
+      </div> {/* End of content-wrapper */}
 
-      {/* Toast Container - Renders all active toasts */}
+      {/* Toast Container (remains outside content-wrapper as it's fixed) */}
       <div className="toast-container">
         {toasts.map((toast) => (
           <ToastNotification 
@@ -691,7 +695,7 @@ function App() {
           />
         ))}
       </div>
-    </div>
+    </div> // End of container
   )
 }
 
