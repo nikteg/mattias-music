@@ -565,6 +565,11 @@ function App() {
     <div className="container" style={backgroundStyle}>
       {/* New wrapper for centered content */}
       <div className="content-wrapper">
+        {/* Display Build Date */}
+        <div className="build-info">
+          Build Date: {__BUILD_DATE__ === 'dev' ? 'Development' : new Date(__BUILD_DATE__).toLocaleString()}
+        </div>
+
         <div className="button-container">
           <select 
             value={selectedMelody}

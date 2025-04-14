@@ -187,3 +187,11 @@
 }
 
 /* Toast CSS remains below */
+
+.build-info {
+  font-size: 0.8em;
+  color: #aaa;
+  margin-bottom: 1rem; /* Space below build info */
+  text-align: center;
+  width: 100%;
+}
