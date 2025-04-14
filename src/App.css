@@ -168,14 +168,16 @@ h1 {
 }
 
 .placeholder-text-container {
-  margin-top: 2rem; /* Space above the text area */
-  max-width: 800px; /* Limit width for readability */
-  width: 90%; /* Responsive width */
-  text-align: left; /* Align text left for readability */
-  color: #ccc; /* Lighter text color */
-  line-height: 1.6; /* Improve line spacing */
+  margin-top: 2rem; 
+  max-width: 800px; 
+  width: 90%; 
+  text-align: left; 
+  color: #ddd; /* Slightly brighter text */
+  line-height: 1.7; /* Increase line spacing a bit more */
+  font-size: 1.3em; /* Increase base font size */
+  font-family: 'Comic Sans MS', 'Chalkduster', 'cursive', sans-serif; /* Fun font stack */
 }
 
 .placeholder-text-container p {
-  margin-bottom: 1em; /* Space between paragraphs */
+  margin-bottom: 1.2em; /* Slightly more space between paragraphs */
 }
