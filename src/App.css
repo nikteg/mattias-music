@@ -181,3 +181,30 @@ h1 {
 .placeholder-text-container p {
   margin-bottom: 1.2em; /* Slightly more space between paragraphs */
 }
+
+.notation-container {
+  margin-top: 2rem; /* Space above notation */
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.2); /* Dark background */
+  border-radius: 8px;
+  max-width: 90%;
+  width: fit-content; /* Fit content width */
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-wrap: wrap; /* Allow notes to wrap */
+  gap: 0.5em; /* Spacing between notes */
+  justify-content: center;
+}
+
+.notation-note {
+  display: inline-block;
+  padding: 0.2em 0.5em;
+  background-color: #eee; /* Light background for notes */
+  color: #333; /* Dark text */
+  border-radius: 4px;
+  font-family: monospace; /* Monospace font for alignment */
+  font-size: 1em;
+  min-width: 2.5em; /* Ensure minimum width */
+  text-align: center;
+}

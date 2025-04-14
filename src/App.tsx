@@ -183,6 +183,13 @@ const MELODIES = {
   ]
 } as const
 
+// Reverse map: Frequency -> Note Name
+const frequencyToNoteName: { [key: number]: string } = {};
+Object.entries(NOTES).forEach(([name, freq]) => {
+  // Handle potential floating point inaccuracies slightly
+  frequencyToNoteName[Math.round(freq * 100) / 100] = name;
+});
+
 type MelodyName = keyof typeof MELODIES
 const melodyNames = Object.keys(MELODIES) as MelodyName[]
 
@@ -602,6 +609,10 @@ function App() {
   const currentMelodyTextSet = melodySpecificTexts[selectedMelody] || melodySpecificTexts[melodyNames[0]]; // Fallback
   const currentParagraphs = isSwedish ? currentMelodyTextSet.sv : currentMelodyTextSet.en;
 
+  // Get note names for the selected melody
+  const currentMelodyNotes = (MELODIES[selectedMelody] || []).map(
+    freq => frequencyToNoteName[Math.round(freq * 100) / 100] || '?');
+
   return (
     <div className="container" style={backgroundStyle}>
       <h1>
@@ -657,6 +668,13 @@ function App() {
       <div className="placeholder-text-container">
         {currentParagraphs.map((text: string, index: number) => (
           <p key={index}>{text}</p>
+        ))}
+      </div>
+
+      {/* Simplified Music Notation Container */}
+      <div className="notation-container">
+        {currentMelodyNotes.map((noteName, index) => (
+          <span key={index} className="notation-note">{noteName}</span>
         ))}
       </div>
 
