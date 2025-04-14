@@ -349,19 +349,23 @@ function App() {
     const freqRange = maxFreq - minFreq;
     const normalizedFreq = Math.max(0, Math.min(1, (frequency - minFreq) / freqRange));
     
-    // --- Subtle Gradient Logic ---
-    // Map normalized frequency to Hue (e.g., 180-300 range - blues to purples/pinks)
-    const hue1 = 180 + normalizedFreq * 120; 
-    const hue2 = (hue1 + 30) % 360; // Second hue relatively close
+    // --- Vibrant 3-Color Gradient Logic ---
+    // Map normalized frequency to Hue (full 360 range)
+    const baseHue = (normalizedFreq * 360 + 180) % 360; // Start offset to avoid initial reds
     
-    // Map normalized frequency to Lightness (narrower range 25-45%)
-    const lightness = 25 + normalizedFreq * 20; 
+    // Create three distinct hues for the gradient (Analogous + Complementary split)
+    const hue1 = baseHue;
+    const hue2 = (baseHue + 30) % 360; // Analogous
+    const hue3 = (baseHue + 180 + Math.random() * 30 - 15) % 360; // Complementary variation
     
-    // Still vibrant saturation
-    const saturation = 90; 
+    // Map normalized frequency to Lightness (wider range 30-70%)
+    const lightness = 30 + normalizedFreq * 40; 
+    
+    // High Saturation
+    const saturation = 95;
 
-    // Use a simpler linear gradient
-    return `linear-gradient(160deg, hsl(${hue1}, ${saturation}%, ${lightness}%), hsl(${hue2}, ${saturation}%, ${lightness + 5}%))`;
+    // Use a 3-color linear gradient
+    return `linear-gradient(145deg, hsl(${hue1}, ${saturation}%, ${lightness}%), hsl(${hue2}, ${saturation}%, ${lightness + 5}%), hsl(${hue3}, ${saturation}%, ${lightness - 5}%))`;
   };
 
   // Accept optional array of drum sound names
