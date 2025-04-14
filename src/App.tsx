@@ -262,6 +262,17 @@ function App() {
   const loopActiveRef = useRef<boolean>(false) // Ref to control the async loop
   let toastIdCounter = useRef(0); // Counter for unique toast IDs
 
+  // Function to add a new toast
+  const addToast = useCallback((message: string) => {
+    const id = toastIdCounter.current++;
+    setToasts((prevToasts) => [...prevToasts, { id, message }]);
+  }, []);
+
+  // Function to remove a toast by ID
+  const removeToast = useCallback((id: number) => {
+    setToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
+  }, []);
+
   const getAudioContext = useCallback(() => {
     if (!audioContextRef.current) {
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -287,7 +298,8 @@ function App() {
 
     oscillator.start(time)
     oscillator.stop(time + 0.15)
-  }, [getAudioContext])
+    addToast("KICK!"); // Add toast for kick
+  }, [getAudioContext, addToast])
 
   const playSnare = useCallback(() => {
     const audioContext = getAudioContext()
@@ -334,18 +346,8 @@ function App() {
     bodyOsc.start(time);
     noiseSource.stop(time + 0.15); // Stop noise based on its decay
     bodyOsc.stop(time + 0.1); // Stop body based on its decay
-  }, [getAudioContext])
-
-  // Function to add a new toast
-  const addToast = useCallback((message: string) => {
-    const id = toastIdCounter.current++;
-    setToasts((prevToasts) => [...prevToasts, { id, message }]);
-  }, []);
-
-  // Function to remove a toast by ID
-  const removeToast = useCallback((id: number) => {
-    setToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
-  }, []);
+    addToast("SNARE!"); // Add toast for snare
+  }, [getAudioContext, addToast])
 
   const playHiHat = useCallback(() => {
     const audioContext = getAudioContext()
@@ -384,9 +386,7 @@ function App() {
     // Play
     noiseSource.start(time);
     noiseSource.stop(time + 0.1); // Stop slightly after decay finishes
-
-    // Trigger a toast notification when hi-hat plays
-    addToast("HIGH HATTT!!!");
+    addToast("HIGH HATTT!!!"); // Keep toast for hi-hat
   }, [getAudioContext, addToast])
 
   // --- Note to Color Logic ---
@@ -432,10 +432,9 @@ function App() {
     gainNode.gain.exponentialRampToValueAtTime(0.00001, time + 0.3)
     oscillator.start(time)
     oscillator.stop(time + 0.3)
-
-    // Update background based on the note played
     setBackgroundStyle({ background: noteToGradient(frequency) });
-  }, [getAudioContext, noteToGradient])
+    addToast(`NOTE: ${frequency.toFixed(0)}Hz`); // Add toast for note
+  }, [getAudioContext, noteToGradient, addToast])
 
   const handleLanguageSwitch = () => {
     setIsSwedish(prev => !prev)
@@ -505,16 +504,18 @@ function App() {
         const drumBeatIndex = Math.floor(i / 2); // Index for the drum pattern
         const drumBeatInMeasure = drumBeatIndex % 4; // Beat within the 4/4 drum measure
 
-        // Play Hi-Hat on every drum beat
-        playHiHat();
-
-        // Play kick on beats 1 & 3 of the drum pattern
-        if (drumBeatInMeasure === 0 || drumBeatInMeasure === 2) {
+        // Play Kick on beat 1 (index 0)
+        if (drumBeatInMeasure === 0) {
           playKick();
         }
-        // Play snare on beats 2 & 4 of the drum pattern
-        else if (drumBeatInMeasure === 1 || drumBeatInMeasure === 3) {
+        // Play Snare on beat 3 (index 2)
+        else if (drumBeatInMeasure === 2) {
           playSnare();
+        }
+
+        // Play Hi-Hat on beats 2 & 4 (index 1 and 3)
+        if (drumBeatInMeasure === 1 || drumBeatInMeasure === 3) {
+          playHiHat();
         }
       }
       // --- End Drum Logic ---
