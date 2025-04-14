@@ -160,8 +160,8 @@ function App() {
     const audioContext = getAudioContext()
     const time = audioContext.currentTime
 
-    // Noise component
-    const noiseBufferSize = audioContext.sampleRate * 0.2; // 0.2 seconds buffer
+    // Noise component (more focused)
+    const noiseBufferSize = audioContext.sampleRate * 0.15; // Shorter buffer
     const noiseBuffer = audioContext.createBuffer(1, noiseBufferSize, audioContext.sampleRate);
     const noiseOutput = noiseBuffer.getChannelData(0);
     for (let i = 0; i < noiseBufferSize; i++) {
@@ -169,30 +169,38 @@ function App() {
     }
     const noiseSource = audioContext.createBufferSource();
     noiseSource.buffer = noiseBuffer;
+    
     const noiseFilter = audioContext.createBiquadFilter();
-    noiseFilter.type = 'highpass';
-    noiseFilter.frequency.value = 1000; // Cut lower frequencies of noise
+    noiseFilter.type = 'bandpass'; // Use bandpass for snare rattle
+    noiseFilter.frequency.setValueAtTime(3000, time); // Center frequency around 3kHz
+    noiseFilter.Q.setValueAtTime(1.5, time); // Moderate resonance
+    
     const noiseGain = audioContext.createGain();
-    noiseGain.gain.setValueAtTime(0.6, time);
-    noiseGain.gain.exponentialRampToValueAtTime(0.01, time + 0.15);
+    noiseGain.gain.setValueAtTime(0.5, time); // Slightly lower initial gain
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, time + 0.1); // Faster decay
+    
     noiseSource.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(audioContext.destination);
 
-    // Tonal component (body)
+    // Tonal component (body with pitch drop)
     const bodyOsc = audioContext.createOscillator();
-    bodyOsc.type = 'triangle';
+    bodyOsc.type = 'sine'; // Smoother sine wave
     const bodyGain = audioContext.createGain();
-    bodyOsc.frequency.setValueAtTime(180, time); // Snare body tone
-    bodyGain.gain.setValueAtTime(0.7, time);
-    bodyGain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+    
+    bodyOsc.frequency.setValueAtTime(200, time); // Start frequency for body
+    bodyOsc.frequency.exponentialRampToValueAtTime(100, time + 0.05); // Quick pitch drop
+    
+    bodyGain.gain.setValueAtTime(0.6, time); // Slightly lower gain
+    bodyGain.gain.exponentialRampToValueAtTime(0.01, time + 0.08); // Very fast body decay
+    
     bodyOsc.connect(bodyGain);
     bodyGain.connect(audioContext.destination);
 
     noiseSource.start(time);
     bodyOsc.start(time);
-    noiseSource.stop(time + 0.2);
-    bodyOsc.stop(time + 0.1);
+    noiseSource.stop(time + 0.15); // Stop noise based on its decay
+    bodyOsc.stop(time + 0.1); // Stop body based on its decay
   }, [getAudioContext])
 
   const playNote = useCallback((frequency: number) => {
