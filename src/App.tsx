@@ -195,65 +195,6 @@ Object.entries(NOTES).forEach(([name, freq]) => {
 type MelodyName = keyof typeof MELODIES
 const melodyNames = Object.keys(MELODIES) as MelodyName[]
 
-// Define the structure for melody-specific texts
-type MelodyTextSet = {
-  en: string[];
-  sv: string[];
-};
-
-// Map MelodyName to its specific text set
-const melodySpecificTexts: Record<MelodyName, MelodyTextSet> = {
-  "Mattias Morning Dance": { 
-    en: [
-      "The first rays of dawn filtered through the blinds...",
-      "He remembered yesterday's struggle...",
-      "With a deep breath, he sat down...",
-    ],
-    sv: [
-      "Gryningens första strålar silade genom persiennerna...",
-      "Han mindes gårdagens kamp...",
-      "Med ett djupt andetag satte han sig ner...",
-    ], 
-  },
-  "Swedish Chef Mattias": { 
-    en: [
-      "\"Börk, börk, börk!\" Mattias muttered...",
-      "He imagined the server logs as a chaotic kitchen...",
-      "Suddenly, clarity! He spotted the misplaced comma...",
-    ],
-    sv: [
-      "\"Börk, börk, börk!\" muttrade Mattias...",
-      "Han föreställde sig serverloggarna som ett kaotiskt kök...",
-      "Plötsligt, klarhet! Han fick syn på det felplacerade kommatecknet...",
-    ],
-  },
-  "Mattias Code Debug Blues": { 
-    en: [
-      "The screen glowed a mournful blue...",
-      "He traced the execution flow...",
-      "He poured another cup of lukewarm coffee...",
-    ],
-    sv: [
-      "Skärmen lyste en sorgsen blå färg...",
-      "Han följde exekveringsflödet...",
-      "Han hällde upp ännu en kopp ljummet kaffe...",
-    ],
-   },
-  // Using placeholders for the rest to satisfy types
-  "Mattias Victory March": { en: ["Marching to victory...", "Deployment successful..."], sv: ["Marscherar mot seger...", "Driftsättning lyckad..."] },
-  "Mattias Coffee Break": { en: ["The aroma filled the air...", "He returned..."], sv: ["Aromen fyllde luften...", "Han återvände..."] },
-  "Mattias Lunch Break Polka": { en: ["A brisk walk...", "Recharged..."], sv: ["En rask promenad...", "Uppladdad..."] },
-  "Mattias Bug Fix Fanfare": { en: ["Found it!...", "The fanfare played..."], sv: ["Hittade den!...", "Fanfaren spelade..."] },
-  "Mattias Friday Dance": { en: ["The week was done...", "Weekend beckoned..."], sv: ["Veckan var slut...", "Helgen lockade..."] },
-  "Mattias Code Review Waltz": { en: ["Suggestions flowed...", "The code improved..."], sv: ["Förslagen flödade...", "Koden förbättrades..."] },
-  "Mattias Keyboard Symphony": { en: ["Fingers flew...", "Each function a movement..."], sv: ["Fingrarna flög...", "Varje funktion en sats..."] },
-  "Mattias' Midnight Coding Marathon": { en: ["The city slept...", "Lines blurred..."], sv: ["Staden sov...", "Gränserna suddades ut..."] },
-  "The Ballad of Refactoring Mattias": { en: ["Old code...", "A ballad..."], sv: ["Gammal kod...", "En ballad..."] },
-  "Mattias' Server Migration Funk": { en: ["The servers groaned...", "Keep the groove..."], sv: ["Servrarna stönade...", "Håll groovet..."] },
-  "Mattias Discovers AI (Again)": { en: ["It generated code...", "Was he training..."], sv: ["Den genererade kod...", "Tränade han..."] },
-  "Mattias' Epic Build Success": { en: ["Green lights...", "An epic culmination..."], sv: ["Gröna lampor...", "En episk kulmen..."] }
-};
-
 // Type for individual toast state
 interface ToastState {
   id: number;
@@ -607,10 +548,6 @@ function App() {
     };
   }, [stopPlaylistLoop]);
 
-  // Select the correct paragraphs based on SELECTED MELODY and language state
-  const currentMelodyTextSet = melodySpecificTexts[selectedMelody] || melodySpecificTexts[melodyNames[0]]; // Fallback
-  const currentParagraphs = isSwedish ? currentMelodyTextSet.sv : currentMelodyTextSet.en;
-
   // Get note names for the selected melody
   const currentMelodyNotes = (MELODIES[selectedMelody] || []).map(
     freq => frequencyToNoteName[Math.round(freq * 100) / 100] || '?');
@@ -669,11 +606,9 @@ function App() {
           </div>
         </div>
 
-        {/* Placeholder text container (now inside content-wrapper) */}
-        <div className="placeholder-text-container">
-          {currentParagraphs.map((text: string, index: number) => (
-            <p key={index}>{text}</p>
-          ))}
+        {/* Display Current Melody Name */}
+        <div className="melody-title-display">
+          {selectedMelody}
         </div>
 
         {/* SVG Music Notation (now inside content-wrapper) */}

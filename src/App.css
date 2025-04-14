@@ -177,19 +177,17 @@ h1 {
   cursor: pointer;
 }
 
-.placeholder-text-container {
+/* Styles for Melody Title Display */
+.melody-title-display {
   margin-top: 2rem;
-  max-width: 800px;
-  width: 90%;
-  text-align: left;
-  color: #ddd;
-  line-height: 1.7;
-  font-size: 1.3em;
-  font-family: 'Comic Sans MS', 'Chalkduster', 'cursive', sans-serif;
-}
-
-.placeholder-text-container p {
-  margin-bottom: 1.2em;
+  margin-bottom: 1rem;
+  font-size: 2.8em; /* Large font size */
+  font-weight: bold;
+  color: #eee; /* Bright text color */
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.5); /* Add text shadow */
+  font-family: 'Arial Black', 'Impact', sans-serif; /* Bold/Impactful font */
+  padding: 0 1rem; /* Ensure some padding if name is very long */
+  word-wrap: break-word; /* Break long words if needed */
 }
 
 .svg-notation-wrapper {
