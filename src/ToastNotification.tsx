@@ -4,6 +4,7 @@ import './ToastNotification.css'; // We'll create this CSS file next
 interface ToastProps {
   id: number;
   message: string;
+  timestamp: string; // Add timestamp prop
   duration?: number; // Duration in ms before starting fade out
   onRemove: (id: number) => void;
 }
@@ -11,7 +12,8 @@ interface ToastProps {
 const ToastNotification: React.FC<ToastProps> = ({ 
   id, 
   message, 
-  duration = 1000, // Default display duration before fade out
+  timestamp, // Receive timestamp
+  duration = 2000, // Keep the longer duration from previous change
   onRemove 
 }) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -36,7 +38,8 @@ const ToastNotification: React.FC<ToastProps> = ({
 
   return (
     <div className={`toast-notification ${isVisible ? 'toast-visible' : 'toast-hidden'}`}>
-      {message}
+      <div className="toast-message">{message}</div>
+      <div className="toast-timestamp">{timestamp}</div>
     </div>
   );
 };

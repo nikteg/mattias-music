@@ -249,6 +249,7 @@ const melodySpecificTexts: Record<MelodyName, MelodyTextSet> = {
 interface ToastState {
   id: number;
   message: string;
+  timestamp: string; // Add timestamp field
 }
 
 function App() {
@@ -265,7 +266,13 @@ function App() {
   // Function to add a new toast
   const addToast = useCallback((message: string) => {
     const id = toastIdCounter.current++;
-    setToasts((prevToasts) => [...prevToasts, { id, message }]);
+    const now = new Date();
+    const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+    setToasts((prevToasts) => {
+      // Add new toast to the START of the array for top-right stacking
+      const newToast = { id, message, timestamp };
+      return [newToast, ...prevToasts];
+    });
   }, []);
 
   // Function to remove a toast by ID
@@ -652,8 +659,9 @@ function App() {
             key={toast.id} 
             id={toast.id} 
             message={toast.message}
+            timestamp={toast.timestamp} // Pass timestamp prop
             onRemove={removeToast}
-            duration={2000} // Increased display duration to 2 sec before fade
+            duration={2000} 
           />
         ))}
       </div>
