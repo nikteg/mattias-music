@@ -189,9 +189,9 @@
 /* Toast CSS remains below */
 
 .build-info {
-  font-size: 0.8em;
-  color: #aaa;
-  margin-bottom: 1rem; /* Space below build info */
+  font-size: 0.7em; /* Even smaller */
+  color: #777; /* Darker grey */
+  margin-top: 2rem; /* Changed from margin-bottom */
   text-align: center;
   width: 100%;
 }

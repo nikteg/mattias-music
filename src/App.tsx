@@ -565,11 +565,6 @@ function App() {
     <div className="container" style={backgroundStyle}>
       {/* New wrapper for centered content */}
       <div className="content-wrapper">
-        {/* Display Build Date */}
-        <div className="build-info">
-          Build Date: {__BUILD_DATE__ === 'dev' ? 'Development' : new Date(__BUILD_DATE__).toLocaleString()}
-        </div>
-
         <div className="button-container">
           <select 
             value={selectedMelody}
@@ -615,6 +610,12 @@ function App() {
         <div className="svg-notation-wrapper">
           <MusicNotationSVG melodyNotes={currentMelodyNotes} notes={NOTES} />
         </div>
+
+        {/* MOVE Build Date here */}
+        <div className="build-info">
+          Build Date: {__BUILD_DATE__ === 'dev' ? 'Development' : new Date(__BUILD_DATE__).toLocaleString()}
+        </div>
+
       </div> {/* End of content-wrapper */}
 
       {/* Toast Container (remains outside content-wrapper as it's fixed) */}
