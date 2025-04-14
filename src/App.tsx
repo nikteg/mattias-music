@@ -184,13 +184,21 @@ const MELODIES = {
 type MelodyName = keyof typeof MELODIES
 const melodyNames = Object.keys(MELODIES) as MelodyName[]
 
-// Sample placeholder text paragraphs
-const placeholderParagraphs = [
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattias enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-  "Duis aute irure dolor in Mattias in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-  "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut Mattias aliquid ex ea commodi consequatur?"
-];
+// Sample placeholder text paragraphs (now with languages)
+const placeholderTexts = {
+  en: [
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattias enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "Duis aute irure dolor in Mattias in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
+    "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut Mattias aliquid ex ea commodi consequatur?"
+  ],
+  sv: [
+    "Sten sax påse är ett enkelt handspel som ofta används för att slumpmässigt avgöra mellan två personer eller som en form av enkel lek. Mattias gillar att spela det för att avgöra vem som diskar.",
+    "Spelet involverar tre gester: sten (en knuten näve), sax (två fingrar utsträckta i ett V-tecken) och påse (en öppen hand). Reglerna är enkla: sten krossar sax, sax klipper påse, och påse täcker sten.",
+    "Om båda spelarna visar samma gest blir det oavgjort, och rundan spelas om. Det kräver ingen utrustning och kan spelas var som helst, vilket gör det till ett populärt och universellt spel. Mattias förlorar oftast.",
+    "Trots sin enkelhet finns det strategier och psykologiska aspekter. Vissa försöker förutse motståndarens nästa drag baserat på tidigare rundor, medan andra förlitar sig på ren slump eller förutbestämda mönster."
+  ]
+};
 
 function App() {
   const [isSwedish, setIsSwedish] = useState(false)
@@ -465,6 +473,9 @@ function App() {
     };
   }, [stopPlaylistLoop]);
 
+  // Select the correct paragraphs based on language state
+  const currentParagraphs = isSwedish ? placeholderTexts.sv : placeholderTexts.en;
+
   return (
     <div className="container" style={backgroundStyle}>
       <h1>
@@ -518,7 +529,7 @@ function App() {
 
       {/* New container for placeholder text */}
       <div className="placeholder-text-container">
-        {placeholderParagraphs.map((text, index) => (
+        {currentParagraphs.map((text, index) => (
           <p key={index}>{text}</p>
         ))}
       </div>
